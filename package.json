@@ -1,0 +1,22 @@
+{
+  "name": "my-cypress-project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cypress open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Awesom12/Sondermind_Cypress_Project.git"
+  },
+  "keywords": [],
+  "author": "Sujana Kotike",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Awesom12/Sondermind_Cypress_Project/issues"
+  },
+  "dependencies": {
+    "cypress": "^13.8.1"
+  }
+}
