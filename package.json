@@ -17,6 +17,7 @@
     "url": "https://github.com/Awesom12/Sondermind_Cypress_Project/issues"
   },
   "dependencies": {
-    "cypress": "^13.8.1"
+    "cypress": "^13.8.1",
+    "cypress-mochawesome-reporter": "^3.8.2"
   }
 }

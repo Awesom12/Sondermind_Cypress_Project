@@ -21,7 +21,7 @@ describe('Migrating from Protractor to Cypress', () => {
             .first()
             .find('td.smart-table-data-cell')
             .eq(0)
-            .should('eq', `Test${random}`)
+            .should('have.text', `Test${random}`)
 
     })
 })

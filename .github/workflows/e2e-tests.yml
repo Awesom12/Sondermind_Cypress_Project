@@ -1,0 +1,14 @@
+#For more info follow: https://github.com/cypress-io/github-action
+
+name: e2e-tests # The name of the workflow that GitHub displays on my repository's 'Actions' tab.
+on: push   #This job would be trigged on every git push to the github repo
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest   #The machine the tests should be running on
+    steps:
+      - name: Checkout     #Checks out the repository and pulls it into our pipeline, so that our workflow can access it.(fetch the code that is in github repo).
+        uses: actions/checkout@v4
+      # Install npm dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress run
+        uses: cypress-io/github-action@v6        

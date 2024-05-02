@@ -1,3 +1,5 @@
+//The Protractor code below is migrated to cypress on https://migrator.cypress.io/
+
 describe('Migrating from Protractor to Cypress', () => {
     it('can test Webtables angular app', () => {
         let random = Math.floor(Math.random() * 1000)
