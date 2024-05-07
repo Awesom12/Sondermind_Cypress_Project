@@ -6,31 +6,26 @@ describe('Sondermind e2e Testing',
         before('intercepts', () => {
             // disable Cypress's default behavior of logging all XMLHttpRequests and fetches
             cy.intercept({ resourceType: /xhr|fetch/ }, { log: false })
-            // cy.intercept({
-            //     method: 'POST',
-            //     url: 'https://events.launchdarkly.com/events/bulk/*'
-            // }).as('menu')
+            cy.intercept({
+                method: 'POST',
+                url: 'https://events.launchdarkly.com/events/bulk/*'
+            }).as('menu')
 
-            // cy.intercept({
-            //     method: 'POST',
-            //     url: 'https://px.ads.linkedin.com/wa/'
-            // }).as('nextQuestion')
+            cy.intercept({
+                method: 'POST',
+                url: 'https://px.ads.linkedin.com/wa/'
+            }).as('nextQuestion')
 
-            // cy.intercept({
-            //     method: 'PATCH',
-            //     url: 'https://api.sondermind.com/svcs/flows/matching-flow-base/*'
-            // }).as('flows')
+            cy.intercept({
+                method: 'PATCH',
+                url: 'https://api.sondermind.com/svcs/flows/matching-flow-base/*'
+            }).as('flows')
         })
 
         it('Can find a Therapist', () => {
             //visit the url: https://www.sondermind.com/
             cy.visit(Cypress.env('sm_url'))
             cy.title().should('contain', 'Online or In-Person Therapy')
-
-            //wait using the intercept instead of waiting for arbitrary time periods
-            // cy.wait('@menu')
-            //     .its('response.statusCode')
-            //     .should('eq', 202)
 
             //Click the menu
             cy.get('button.btn.pointer').click()
@@ -46,11 +41,6 @@ describe('Sondermind e2e Testing',
                     cy.url().should('include', 'https://start.sondermind.com/')
                 })
 
-            //wait using the intercept instead of explicit wait
-            // cy.wait('@menu')
-            //     .its('response.statusCode')
-            //     .should('eq', 202)
-
             //click on the radio button "I'm still exploring"
             cy.contains("I'm still exploring").find('input').check({ force: true })
 
@@ -58,12 +48,12 @@ describe('Sondermind e2e Testing',
             cy.get('[data-test="next-submit-button"]').click()
 
             //wait using the intercept instead of explicit wait
-            // cy.wait('@nextQuestion')
-            //     .its('response.statusCode')
-            //     .should('eq', 204)
-            // cy.wait('@flows')
-            // cy.wait('@menu')
-            // cy.wait('@flows')
+            cy.wait('@nextQuestion')
+                .its('response.statusCode')
+                .should('eq', 204)
+            cy.wait('@flows')
+            cy.wait('@menu')
+            cy.wait('@flows')
 
             //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
             // Followed: https://glebbahmutov.com/cypress-examples/recipes/conditional-testing.html#click-a-button-if-present
@@ -112,9 +102,9 @@ describe('Sondermind e2e Testing',
                     }
                 })
 
-            //Type 'Lafayette' in the location field
+            //Type '80026' in the location field
             cy.contains('[data-test="form-field-label"]', 'Location')
-                .next('[data-test="input-field"]').type('Lafayette')
+                .next('[data-test="input-field"]').type('80026')
 
             //Click on 'Add location' icon
             cy.get('.mat-icon', { timeout: 11_000 })
@@ -126,7 +116,7 @@ describe('Sondermind e2e Testing',
 
             //Using Keyboard keys click on 'down arrow' on 'Add location' icon
             cy.contains('.mat-icon', 'add_location', { timeout: 10000 })
-                .type('{downArrow}{downArrow}{enter}')
+                .type('{downArrow}{enter}')
 
             cy.wait(1000) //next button is not clicked without this wait here
 
@@ -135,7 +125,7 @@ describe('Sondermind e2e Testing',
                 .click()
 
             //wait using the intercept instead of explicit wait
-            cy.wait('@nextQuestion')
+            // cy.wait('@nextQuestion')
 
             //Next question - "What brought you here today?" should be displayed
             cy.contains('h2', ' What brought you here today?')
