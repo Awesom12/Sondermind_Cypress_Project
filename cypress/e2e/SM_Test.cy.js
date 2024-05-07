@@ -77,24 +77,9 @@ describe('Sondermind e2e Testing',
                                     .should('eq', 200)
                             })
 
-                        //wait using the intercept instead of explicit wait
-                        //cy.wait('@nextQuestion')
-                        //cy.wait('@menu')
-                        //cy.wait('@flows')
-
                         //click on the 'next' button
                         cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
                             .next().find('[data-test="next-submit-button"]').click()
-
-                        //wait using the intercept instead of explicit wait
-                        // cy.wait('@nextQuestion')
-                        //     .its('response.statusCode')
-                        //     .should('eq', 204)
-
-                        // cy.wait('@flows')
-                        //     .its('response.statusCode')
-                        //     .should('eq', 200)
-
                         return
                     } else {
                         // there is no button
@@ -123,9 +108,6 @@ describe('Sondermind e2e Testing',
             //click on the 'next' button
             cy.get(".next-from-location")
                 .click()
-
-            //wait using the intercept instead of explicit wait
-            // cy.wait('@nextQuestion')
 
             //Next question - "What brought you here today?" should be displayed
             cy.contains('h2', ' What brought you here today?')
