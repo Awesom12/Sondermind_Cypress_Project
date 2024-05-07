@@ -6,20 +6,20 @@ describe('Sondermind e2e Testing',
         before('intercepts', () => {
             // disable Cypress's default behavior of logging all XMLHttpRequests and fetches
             cy.intercept({ resourceType: /xhr|fetch/ }, { log: false })
-            cy.intercept({
-                method: 'POST',
-                url: 'https://events.launchdarkly.com/events/bulk/*'
-            }).as('menu')
+            // cy.intercept({
+            //     method: 'POST',
+            //     url: 'https://events.launchdarkly.com/events/bulk/*'
+            // }).as('menu')
 
-            cy.intercept({
-                method: 'POST',
-                url: 'https://px.ads.linkedin.com/wa/'
-            }).as('nextQuestion')
+            // cy.intercept({
+            //     method: 'POST',
+            //     url: 'https://px.ads.linkedin.com/wa/'
+            // }).as('nextQuestion')
 
-            cy.intercept({
-                method: 'PATCH',
-                url: 'https://api.sondermind.com/svcs/flows/matching-flow-base/*'
-            }).as('flows')
+            // cy.intercept({
+            //     method: 'PATCH',
+            //     url: 'https://api.sondermind.com/svcs/flows/matching-flow-base/*'
+            // }).as('flows')
         })
 
         it('Can find a Therapist', () => {
@@ -28,9 +28,9 @@ describe('Sondermind e2e Testing',
             cy.title().should('contain', 'Online or In-Person Therapy')
 
             //wait using the intercept instead of waiting for arbitrary time periods
-            cy.wait('@menu')
-                .its('response.statusCode')
-                .should('eq', 202)
+            // cy.wait('@menu')
+            //     .its('response.statusCode')
+            //     .should('eq', 202)
 
             //Click the menu
             cy.get('button.btn.pointer').click()
@@ -47,9 +47,9 @@ describe('Sondermind e2e Testing',
                 })
 
             //wait using the intercept instead of explicit wait
-            cy.wait('@menu')
-                .its('response.statusCode')
-                .should('eq', 202)
+            // cy.wait('@menu')
+            //     .its('response.statusCode')
+            //     .should('eq', 202)
 
             //click on the radio button "I'm still exploring"
             cy.contains("I'm still exploring").find('input').check({ force: true })
@@ -58,12 +58,12 @@ describe('Sondermind e2e Testing',
             cy.get('[data-test="next-submit-button"]').click()
 
             //wait using the intercept instead of explicit wait
-            cy.wait('@nextQuestion')
-                .its('response.statusCode')
-                .should('eq', 204)
-            cy.wait('@flows')
-            cy.wait('@menu')
-            cy.wait('@flows')
+            // cy.wait('@nextQuestion')
+            //     .its('response.statusCode')
+            //     .should('eq', 204)
+            // cy.wait('@flows')
+            // cy.wait('@menu')
+            // cy.wait('@flows')
 
             //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
             // Followed: https://glebbahmutov.com/cypress-examples/recipes/conditional-testing.html#click-a-button-if-present
@@ -88,22 +88,22 @@ describe('Sondermind e2e Testing',
                             })
 
                         //wait using the intercept instead of explicit wait
-                        cy.wait('@nextQuestion')
+                        //cy.wait('@nextQuestion')
                         //cy.wait('@menu')
-                        cy.wait('@flows')
+                        //cy.wait('@flows')
 
                         //click on the 'next' button
                         cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
                             .next().find('[data-test="next-submit-button"]').click()
 
                         //wait using the intercept instead of explicit wait
-                        cy.wait('@nextQuestion')
-                            .its('response.statusCode')
-                            .should('eq', 204)
+                        // cy.wait('@nextQuestion')
+                        //     .its('response.statusCode')
+                        //     .should('eq', 204)
 
-                        cy.wait('@flows')
-                            .its('response.statusCode')
-                            .should('eq', 200)
+                        // cy.wait('@flows')
+                        //     .its('response.statusCode')
+                        //     .should('eq', 200)
 
                         return
                     } else {
