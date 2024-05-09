@@ -1,4 +1,4 @@
-name: e2e-tests # The name of the workflow that GitHub displays on my repository's 'Actions' tab.
+name: SM-e2e-test # The name of the workflow that GitHub displays on my repository's 'Actions' tab.
 on: push   #This job would be trigged on every git push to the github repo
 jobs:
   cypress-run:
