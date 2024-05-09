@@ -52,8 +52,14 @@ describe('Sondermind e2e Testing',
                 .its('response.statusCode')
                 .should('eq', 204)
             cy.wait('@flows')
+                .its('response.statusCode')
+                .should('eq', 200)
             cy.wait('@menu')
+                .its('response.statusCode')
+                .should('eq', 202)
             cy.wait('@flows')
+                .its('response.statusCode')
+                .should('eq', 200)
 
             //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
             // Followed: https://glebbahmutov.com/cypress-examples/recipes/conditional-testing.html#click-a-button-if-present
