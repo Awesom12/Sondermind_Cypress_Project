@@ -12,5 +12,4 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v6
         with:
-            spec: cypress/e2e/SM_Test.cy.js 
-            browser: edge       
+            spec: cypress/e2e/SM_Test.cy.js                   
