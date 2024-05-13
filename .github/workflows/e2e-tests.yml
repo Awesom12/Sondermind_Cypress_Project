@@ -14,7 +14,7 @@ jobs:
         uses: cypress-io/github-action@v6    
         with:
           spec: cypress/e2e/SM_Test.cy.js
-          browser: chrome
+          
       # Upload reports to Github
       # Got the lines of code below from: https://github.com/actions/upload-artifact?tab=readme-ov-file     
       - name: Cypress Test Report   
