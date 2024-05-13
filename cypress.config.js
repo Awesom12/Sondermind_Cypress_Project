@@ -8,6 +8,7 @@ module.exports = defineConfig({
       require('cypress-mochawesome-reporter/plugin')(on);
     },
     defaultCommandTimeout: 10000,
-    watchForFileChanges: false
+    watchForFileChanges: false,
+    video: true
   },
 });

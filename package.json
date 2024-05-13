@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "npx cypress open",
-    "headless": "npx cypress run"
+    "headless": "npx cypress run",
+    "SM_Test": "npx cypress run --spec cypress/e2e/SM_Test.cy.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,8 @@
   "dependencies": {
     "cypress": "^13.8.1",
     "cypress-mochawesome-reporter": "^3.8.2"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^8.4.1"
   }
 }
