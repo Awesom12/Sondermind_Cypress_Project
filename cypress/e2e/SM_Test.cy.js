@@ -51,6 +51,7 @@ describe('Sondermind e2e Testing',
             //wait using the intercept instead of explicit wait
             cy.wait(['@nextQuestion', '@flows', '@menu', '@flows'])
 
+            //Sometimes waiting for intercept is not enough hence adding the wait below
             cy.wait(1000)
 
             //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
@@ -217,8 +218,7 @@ describe('Sondermind e2e Testing',
             cy.contains('h2', 'How did you hear about us?')
                 .should('be.visible')
 
-            //click on the radio button "Health insurance"
-            // cy.contains('Internet Search').prev().click()
+            //click on the radio button "Health insurance"           
             cy.contains('label.mat-radio-label', 'Internet Search')
                 .find('>span')
                 .first()
