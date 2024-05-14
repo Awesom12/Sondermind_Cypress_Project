@@ -17,7 +17,8 @@ jobs:
           
       # Upload reports to Github
       # Got the lines of code below from: https://github.com/actions/upload-artifact?tab=readme-ov-file     
-      - name: Cypress Test Report   
+      - name: Cypress Test Report
+        if: always()   #This if condition enables to generate the report even if the test case fails
         uses: actions/upload-artifact@v4
         with:
           name: Mochawesome HTML Report

@@ -23,3 +23,13 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+
+Cypress.Commands.add('clickNextBtn', () => {
+    //Click on 'Next' button
+    cy.contains('button[type=submit]', 'Next')
+        .click()
+})
+
+Cypress.Commands.add('flows', () => {
+    cy.get('[data-test="flows-intake-step-host-container"]')
+})
