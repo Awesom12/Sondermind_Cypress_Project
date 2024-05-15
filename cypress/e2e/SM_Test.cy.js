@@ -46,17 +46,19 @@ describe('Sondermind e2e Testing', () => {
         //cy.wait(['@flows', '@nextQuestion', '@menu', '@flows'])
 
         //Sometimes waiting for intercept is not enough hence adding the wait below
-        cy.wait(500)
+        cy.wait(1000)
 
         //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
         // Followed: https://glebbahmutov.com/cypress-examples/recipes/conditional-testing.html#click-a-button-if-present
         // get the element but disable the built-in cy.contains assertions
         // by appending our own dummy .should() assertion
-        cy.flows().contains("We're here for you on your journey", { timeout: 30_000 })
+        //cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey", { timeout: 30_000 })
+        cy.getDataTest("We're here for you on your journey", { timeout: 30_000 })
             .should((_) => { })
             .then(($hContent) => {
                 if ($hContent.length) {
-                    cy.flows().contains("We're here for you on your journey")
+                    //cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey")
+                    cy.getDataTest("We're here for you on your journey")
                         .scrollIntoView({ duration: 500 })
                         .should('be.visible')
                         .as('journey')
@@ -69,12 +71,13 @@ describe('Sondermind e2e Testing', () => {
                                 .should('eq', 200)
                         })
 
-                    cy.flows().contains("We're here for you on your journey")
+                    // cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey")
+                    cy.getDataTest("We're here for you on your journey")
                         .next()
                         .clickNextBtn()
 
-                    //cy.flows().contains('Ready when you are.')
-                    cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
+                    //cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
+                    cy.getDataTest('Ready when you are.')
                         .should('be.visible')
                         .as('Ready')
 
@@ -112,7 +115,8 @@ describe('Sondermind e2e Testing', () => {
         cy.wait(500) //next button is not clicked without this wait here
 
         //click on the 'next' button
-        cy.contains('[data-test="flows-intake-step-host-container"]', 'Location')
+        //cy.contains('[data-test="flows-intake-step-host-container"]', 'Location')
+        cy.getDataTest('Location')
             .next()
             .clickNextBtn()
 
@@ -124,7 +128,8 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('label.mat-radio-label', "I'm feeling down or depressed")
             .click()
 
-        cy.contains('[data-test="flows-intake-step-host-container"]', "I'm feeling down or depressed")
+        //cy.contains('[data-test="flows-intake-step-host-container"]', "I'm feeling down or depressed")
+        cy.getDataTest("I'm feeling down or depressed")
             .next()
             .clickNextBtn()
 
@@ -137,7 +142,8 @@ describe('Sondermind e2e Testing', () => {
             .click()
 
         //click on the 'next' button
-        cy.contains('[data-test="flows-intake-step-host-container"]', 'Yes')
+        //cy.contains('[data-test="flows-intake-step-host-container"]', 'Yes')
+        cy.getDataTest('Yes')
             .next()
             .clickNextBtn()
 
@@ -154,7 +160,8 @@ describe('Sondermind e2e Testing', () => {
                     cy.contains('label.mat-checkbox-layout', 'Daytime (9am-5pm)')
                         .click()
 
-                    cy.contains('[data-test="flows-intake-step-host-container"]', 'Weekdays', 'Weekends')
+                    //cy.contains('[data-test="flows-intake-step-host-container"]', 'Weekdays', 'Weekends')
+                    cy.getDataTest('Weekdays', 'Weekends')
                         .next()
                         .clickNextBtn()
 
@@ -206,8 +213,17 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('h2', 'Select your insurance company')
             .should('be.visible')
 
-        //click on the radio button "Health insurance"
-        cy.contains('.mat-checkbox-label', 'Lucent Health - Summit County Government Plan')
+
+        //click on drop down
+        cy.contains('button.iris-dropdown', 'Insurance company')
+            .click()
+
+        //click on the dropdown list item
+        cy.contains('div.iris-dropdown-list-item', 'Lucent Health - Summit County Government Plan')
+            .click()
+
+        //click any where on the page so that the dropdown list item gets selected
+        cy.contains('h2', 'Select your insurance company')
             .click()
 
         //click on the 'next' button       
@@ -281,14 +297,14 @@ describe('Sondermind e2e Testing', () => {
         cy.get('input[name=contactLastName]', { timeout: 30000 })
             .type(faker.person.lastName())
 
-        const bday = faker.date.birthdate().toLocaleDateString('en-US', {
+        const bDay = faker.date.birthdate().toLocaleDateString('en-US', {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
         })
 
         cy.get('input[data-test=mobile-basic-form-birthday-input]', { timeout: 30_000 })
-            .type(bday)
+            .type(bDay)
 
         cy.get('mat-select[data-test="gender-dropdown"]')
             .find('div.mat-select-arrow-wrapper')

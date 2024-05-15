@@ -30,6 +30,6 @@ Cypress.Commands.add('clickNextBtn', () => {
         .click()
 })
 
-Cypress.Commands.add('flows', () => {
-    cy.get('[data-test="flows-intake-step-host-container"]')
+Cypress.Commands.add('getDataTest', input => {
+    cy.contains('[data-test="flows-intake-step-host-container"]', `${input}`)
 })
