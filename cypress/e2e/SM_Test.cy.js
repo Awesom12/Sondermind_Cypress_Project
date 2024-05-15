@@ -57,7 +57,6 @@ describe('Sondermind e2e Testing', () => {
             .should((_) => { })
             .then(($hContent) => {
                 if ($hContent.length) {
-                    //cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey")
                     cy.getDataTest("We're here for you on your journey")
                         .scrollIntoView({ duration: 500 })
                         .should('be.visible')
@@ -71,17 +70,17 @@ describe('Sondermind e2e Testing', () => {
                                 .should('eq', 200)
                         })
 
-                    // cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey")
+                    //Click on the Next button
                     cy.getDataTest("We're here for you on your journey")
                         .next()
                         .clickNextBtn()
 
-                    //cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
+                    //Next question - "Ready when you are." should be displayed
                     cy.getDataTest('Ready when you are.')
                         .should('be.visible')
                         .as('Ready')
 
-                    //cy.contains('[data-test="flows-intake-step-host-container"]', 'Ready when you are.')
+                    //Click on the Next button
                     cy.get('@Ready')
                         .next()
                         .clickNextBtn()
@@ -114,8 +113,7 @@ describe('Sondermind e2e Testing', () => {
 
         cy.wait(500) //next button is not clicked without this wait here
 
-        //click on the 'next' button
-        //cy.contains('[data-test="flows-intake-step-host-container"]', 'Location')
+        //click on the 'next' button        
         cy.getDataTest('Location')
             .next()
             .clickNextBtn()
@@ -128,7 +126,6 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('label.mat-radio-label', "I'm feeling down or depressed")
             .click()
 
-        //cy.contains('[data-test="flows-intake-step-host-container"]', "I'm feeling down or depressed")
         cy.getDataTest("I'm feeling down or depressed")
             .next()
             .clickNextBtn()
@@ -141,12 +138,12 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('label.mat-radio-label', 'Yes')
             .click()
 
-        //click on the 'next' button
-        //cy.contains('[data-test="flows-intake-step-host-container"]', 'Yes')
+        //click on the 'next' button        
         cy.getDataTest('Yes')
             .next()
             .clickNextBtn()
 
+        //Adding this wait below as the test fails at the question: When are you available for sessions? fails without wait
         cy.wait(500)
 
         //SOMETIMES THE USER'S AVAILABILITY TO SESSIONS PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
@@ -154,13 +151,15 @@ describe('Sondermind e2e Testing', () => {
             .should((_) => { })
             .then(($hContent) => {
                 if ($hContent.length) {
+                    //Next question - "When are you available for sessions?" should be displayed
                     cy.contains('[data-test="hero-header-text"]', 'When are you available for sessions?')
                         .should('be.visible')
 
+                    //click on the checkbox - Daytime (9am-5pm)
                     cy.contains('label.mat-checkbox-layout', 'Daytime (9am-5pm)')
                         .click()
 
-                    //cy.contains('[data-test="flows-intake-step-host-container"]', 'Weekdays', 'Weekends')
+                    //click on the 'next' button       
                     cy.getDataTest('Weekdays', 'Weekends')
                         .next()
                         .clickNextBtn()
@@ -290,10 +289,12 @@ describe('Sondermind e2e Testing', () => {
          }) */
 
         //GETTING USER INFO FROM FAKER API
+        //Enter the first name
         cy.get('input[name=contactFirstName]')
             .scrollIntoView()
             .type(faker.person.firstName())
 
+        //Enter the last name   
         cy.get('input[name=contactLastName]', { timeout: 30000 })
             .type(faker.person.lastName())
 
@@ -303,13 +304,16 @@ describe('Sondermind e2e Testing', () => {
             day: "2-digit",
         })
 
+        //Enter the birth day
         cy.get('input[data-test=mobile-basic-form-birthday-input]', { timeout: 30_000 })
             .type(bDay)
 
+        //Click on gender dropdown
         cy.get('mat-select[data-test="gender-dropdown"]')
             .find('div.mat-select-arrow-wrapper')
             .click()
 
+        //Choose the option 'Man'
         cy.get('div[role="listbox"]')
             .find('mat-option')
             .contains('Man')
@@ -322,10 +326,12 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('h2', 'Where should we send account updates?')
             .should('be.visible')
 
+        //Enter contact email
         cy.get('input[name="contactEmail"]')
             .scrollIntoView()
             .type(faker.internet.email())
 
+        //Enter Phone number
         cy.get('input[name="contactPhoneNumber"]')
             //with faker.phone.number(), some times getting the error invalid phone number
             // .type(faker.phone.number())
