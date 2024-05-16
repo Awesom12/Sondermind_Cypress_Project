@@ -51,8 +51,9 @@ describe('Sondermind e2e Testing', () => {
         //SOMETIMES THE LINKS TO DIFFERENT RESOURCES PAGE DOESN'T GET OPENED AND HENCE USING THE FOLLOWING IF - ELSE
         // Followed: https://glebbahmutov.com/cypress-examples/recipes/conditional-testing.html#click-a-button-if-present
         // get the element but disable the built-in cy.contains assertions
-        // by appending our own dummy .should() assertion
-        //cy.contains('[data-test="flows-intake-step-host-container"]', "We're here for you on your journey", { timeout: 30_000 })
+        // by appending dummy .should() assertion
+
+        //****cy.getDataTest is a custom command****
         cy.getDataTest("We're here for you on your journey", { timeout: 30_000 })
             .should((_) => { })
             .then(($hContent) => {
@@ -71,6 +72,7 @@ describe('Sondermind e2e Testing', () => {
                         })
 
                     //Click on the Next button
+                    //****cy.getDataTest is a custom command****
                     cy.getDataTest("We're here for you on your journey")
                         .next()
                         .clickNextBtn()
@@ -91,6 +93,10 @@ describe('Sondermind e2e Testing', () => {
                     cy.log('There is no page that contains "We\'re here for you on your journey"')
                 }
             })
+
+        //Next question - "Where are you located?" should be displayed
+        cy.contains('h2', 'Where are you located?')
+            .should('be.visible')
 
         //Type '80026' in the location field
         cy.contains('[data-test="form-field-label"]', 'Location')
@@ -113,7 +119,8 @@ describe('Sondermind e2e Testing', () => {
 
         cy.wait(500) //next button is not clicked without this wait here
 
-        //click on the 'next' button        
+        //click on the 'next' button
+        //****cy.getDataTest is a custom command****       
         cy.getDataTest('Location')
             .next()
             .clickNextBtn()
@@ -138,7 +145,8 @@ describe('Sondermind e2e Testing', () => {
         cy.contains('label.mat-radio-label', 'Yes')
             .click()
 
-        //click on the 'next' button        
+        //click on the 'next' button
+        //****cy.getDataTest is a custom command****        
         cy.getDataTest('Yes')
             .next()
             .clickNextBtn()
@@ -283,9 +291,7 @@ describe('Sondermind e2e Testing', () => {
                  .type(FirstName + user.email)
  
              cy.get('input[name="contactPhoneNumber"]')
-                 .type(user.phone, { log: false })
- 
- 
+                 .type(user.phone, { log: false }) 
          }) */
 
         //GETTING USER INFO FROM FAKER API
