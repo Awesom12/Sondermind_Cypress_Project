@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker'
 
 describe('Sondermind e2e Testing', () => {
     before('intercepts', () => {
-        // disable Cypress's default behavior of logging all XMLHttpRequests and fetches
+        // disable Cypress's default behavior of logging all XMLHttpRequests and fetches in the command log
         cy.intercept({ resourceType: /xhr|fetch/ }, { log: false })
 
         cy.intercept('POST', 'https://events.launchdarkly.com/events/bulk/*').as('menu')
@@ -11,36 +11,41 @@ describe('Sondermind e2e Testing', () => {
     })
 
     it('Can find a Therapist', () => {
-        //visit the url: https://www.sondermind.com/
         //Getting the url from cypress.env.json
+        cy.section('Open Sondermind\'s website')
+        cy.step('visit the url: https://www.sondermind.com/')
         cy.visit(Cypress.env('sm_url'))
         cy.title()
             .should('contain', 'Online or In-Person Therapy')
 
-        //Click the menu
+        cy.step('Click on the menu button')
         cy.get('button.btn.pointer').click()
 
-        //click the button 'Find a Therapist'
+        cy.step("Click on the button - 'Find a Therapist'")
         cy.contains('a.btn', 'Find a Therapist').click({ force: true })
 
-        //Remove the 'target' attribute from the button ''a.btn-primary', so that the new tab gets opened in the same tab
+        cy.step("Remove the 'target' attribute from the button ''a.btn-primary', so that the new tab gets opened in the current tab")
         cy.get('a.btn-primary').eq(0)
             .invoke('removeAttr', 'target')
             .click({ force: true })
 
+        cy.step("Another tab gets opened with a different url, hence assert the url")
         cy.url()
             .should('include', 'https://start.sondermind.com/')
 
-        //The spinning icon should not be visible
+        cy.step("The spinning icon should not exist to proceed to the questionnnaire")
         cy.get('.flow-spinner-container')
             .should('not.exist')
 
+        cy.section("The questionnaire to 'Find a Therapist' starts")
         //click on the radio button "I'm still exploring"
+        cy.step("click on the radio button - I'm still exploring of the question 'Which best describes you?'")
         cy.contains('label.mat-radio-label', "I'm still exploring", { timeout: 30_000 })
             .should('be.visible')
             .click()
 
-        cy.clickNextBtn()
+        cy.step("click on the Next button")
+        cy.clickNextBtn() //This is a custom command
 
         //wait using the intercept instead of explicit wait
         //cy.wait(['@flows', '@nextQuestion', '@menu', '@flows'])
@@ -53,6 +58,7 @@ describe('Sondermind e2e Testing', () => {
         // get the element but disable the built-in cy.contains assertions
         // by appending dummy .should() assertion
 
+        cy.step("Check if the query We're here for you on your journey opens")
         //****cy.getDataTest is a custom command****
         cy.getDataTest("We're here for you on your journey", { timeout: 30_000 })
             .should((_) => { })
@@ -63,7 +69,8 @@ describe('Sondermind e2e Testing', () => {
                         .should('be.visible')
                         .as('journey')
 
-                    //Verify if all the links on the page are live
+                    cy.section("If the query We're here for you on your journey gets visible")
+                    cy.step("Verify if all the links on the query are live")
                     cy.get('a.card.sonder-external-link')
                         .each((link) => {
                             cy.request(link.prop('href'))
@@ -71,39 +78,37 @@ describe('Sondermind e2e Testing', () => {
                                 .should('eq', 200)
                         })
 
-                    //Click on the Next button
+                    cy.step("click on the Next button")
                     //****cy.getDataTest is a custom command****
                     cy.getDataTest("We're here for you on your journey")
                         .next()
                         .clickNextBtn()
 
-                    //Next question - "Ready when you are." should be displayed
+                    cy.section("The query titled - Curious to see available therapists? containing 'Ready when you are.' should be displayed")
                     cy.getDataTest('Ready when you are.')
                         .should('be.visible')
                         .as('Ready')
 
-                    //Click on the Next button
+                    cy.step("click on the Next button")
                     cy.get('@Ready')
                         .next()
                         .clickNextBtn()
 
                     return
                 } else {
-                    // if the text "We're here for you on your journey" is not visible
-                    cy.log('There is no page that contains "We\'re here for you on your journey"')
+                    cy.step("The query titled - 'We\'re here for you on your journey' is NOT displayed")
                 }
             })
-
-        //Next question - "Where are you located?" should be displayed
+        cy.section("The query titled - 'Where are you located?' should be displayed")
         cy.contains('h2', 'Where are you located?')
             .should('be.visible')
 
-        //Type '80026' in the location field
+        cy.step("Enter '80026' in the location field")
         cy.contains('[data-test="form-field-label"]', 'Location')
             .next('[data-test="input-field"]')
             .type('80026')
 
-        //Click on 'Add location' icon
+        cy.step("Click on 'Add location' icon")
         cy.contains('.mat-icon', 'add_location')
             .as('locationIcon')
             .click()
@@ -112,40 +117,40 @@ describe('Sondermind e2e Testing', () => {
         //This could be because we are calling 'google api' which is an external api
         cy.wait(500)
 
-        //Using Keyboard keys click on 'down arrow' on 'Add location' icon
-        //cy.contains('.mat-icon', 'add_location')
+        cy.step(" Using Keyboard keys click on 'down arrow' and select the correct location")
         cy.get('@locationIcon')
             .type('{downArrow}{enter}')
 
         cy.wait(500) //next button is not clicked without this wait here
 
-        //click on the 'next' button
+        cy.step("click on the Next button")
         //****cy.getDataTest is a custom command****       
         cy.getDataTest('Location')
             .next()
             .clickNextBtn()
 
-        //Next question - "What brought you here today?" should be displayed
+        cy.section("The query titled - 'What brought you here today?' should be displayed")
         cy.contains('h2', ' What brought you here today?')
             .should('exist')
 
-        //click on the radio button "I'm feeling down or depressed"                     
+        cy.step("click on the radio button - I'm feeling down or depressed")
         cy.contains('label.mat-radio-label', "I'm feeling down or depressed")
             .click()
 
+        cy.step("click on the Next button")
         cy.getDataTest("I'm feeling down or depressed")
             .next()
             .clickNextBtn()
 
-        //Next question - "Are you open to video sessions?" should be displayed
+        cy.section("The query titled - 'Are you open to video sessions?' should be displayed")
         cy.contains('h2', ' Are you open to video sessions?')
             .should('exist')
 
-        //click on the radio button "Yes"         
+        cy.step("click on the radio button - Yes")
         cy.contains('label.mat-radio-label', 'Yes')
             .click()
 
-        //click on the 'next' button
+        cy.step("click on the Next button")
         //****cy.getDataTest is a custom command****        
         cy.getDataTest('Yes')
             .next()
@@ -159,15 +164,15 @@ describe('Sondermind e2e Testing', () => {
             .should((_) => { })
             .then(($hContent) => {
                 if ($hContent.length) {
-                    //Next question - "When are you available for sessions?" should be displayed
+                    cy.section("If the query titled - 'When are you available for sessions?' is displayed")
                     cy.contains('[data-test="hero-header-text"]', 'When are you available for sessions?')
                         .should('be.visible')
 
-                    //click on the checkbox - Daytime (9am-5pm)
+                    cy.step("click on the checkbox - Daytime (9am-5pm)")
                     cy.contains('label.mat-checkbox-layout', 'Daytime (9am-5pm)')
                         .click()
 
-                    //click on the 'next' button       
+                    cy.step("click on the Next button")
                     cy.getDataTest('Weekdays', 'Weekends')
                         .next()
                         .clickNextBtn()
@@ -175,25 +180,25 @@ describe('Sondermind e2e Testing', () => {
                     return
                 } else {
                     // there is no button
-                    cy.log('there is no page that contains "When are you available for sessions?"')
+                    cy.step("The query titled - 'When are you available for sessions?' is NOT displayed")
                 }
             })
 
-        //Next question - "A Would you prefer a therapist of a certain gender?" should be displayed
+        cy.section("The query titled - 'Would you prefer a therapist of a certain gender?' should be displayed")
         cy.contains('h2', 'Would you prefer a therapist of a certain gender?')
             .should('exist')
 
-        //click on the radio button "Woman"
+        cy.step("click on the radio button - 'Woman'")
         cy.contains("Woman").find('.mat-radio-inner-circle').click()
 
-        //click on the 'next' button           
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - "Are there any other preferences you'd like to share?" should be displayed
+        cy.section("The query titled - 'Are there any other preferences you'd like to share?' should be displayed")
         cy.contains('h2', "Are there any other preferences you'd like to share?")
             .should('be.visible')
 
-        //click on the radio button "Yes"
+        cy.step("click on the radio button - Yes")
         cy.contains("Yes")
             .find('.mat-radio-inner-circle')
             .click()
@@ -203,104 +208,110 @@ describe('Sondermind e2e Testing', () => {
             .type('This might include race, ethnicity, sexuality, or another identity that is important to you. ' +
                 "We'll do our best to meet as many of your preferences as possible.", { delay: 0 })
 
-        //click on the 'next' button           
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - "How will you pay for therapy?" should be displayed
+        cy.section("The query titled - 'How will you pay for therapy?' should be displayed")
         cy.contains('h2', 'How will you pay for therapy?')
             .should('be.visible')
 
-        //click on the radio button "Health insurance"
+        cy.step("click on the radio button - Health insurance")
         cy.contains("Health insurance").find('.mat-radio-inner-circle').click()
 
-        //click on the 'next' button        
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - " Select your insurance company?" should be displayed
+        cy.section("The query titled - 'Select your insurance company?' should be displayed")
         cy.contains('h2', 'Select your insurance company')
             .should('be.visible')
 
-
-        //click on drop down
+        cy.step("click on drop down to select the Insurance company")
         cy.contains('button.iris-dropdown', 'Insurance company')
             .click()
 
-        //click on the dropdown list item
+        cy.step("click on the dropdown list item 'Lucent Health - Summit County Government Plan'")
         cy.contains('div.iris-dropdown-list-item', 'Lucent Health - Summit County Government Plan')
             .click()
 
-        //click any where on the page so that the dropdown list item gets selected
+        cy.step("click any where on the page so that the dropdown list item gets selected")
         cy.contains('h2', 'Select your insurance company')
             .click()
 
-        //click on the 'next' button       
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - " How did you hear about us?" should be displayed
+        cy.section("The query titled - 'How did you hear about us?' should be displayed")
         cy.contains('h2', 'How did you hear about us?')
             .should('be.visible')
 
-        //click on the radio button "Health insurance"           
+        cy.step("click on the radio button - 'Health insurance'")
         cy.contains('label.mat-radio-label', 'Internet Search')
             .find('>span')
             .first()
             .click()
 
-        //click on the 'next' button            
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
 
-        //Next question - "Who's getting therapy?" should be displayed
+        cy.section("The query titled - 'Who's getting therapy?' should be displayed")
         cy.contains('h2', 'Who\'s getting therapy?')
             .should('be.visible')
 
         //APPENDING RANDOM VALUES TO THE USER'S FIRSTNAME SO THAT WE CAN ENTER DYNAMIC USER EACH TIME
         let rand = Math.floor(Math.random() * 1000)
         //GETTING USER INFO FROM 'FIXTURES'
-        /*  cy.fixture('user.json').then((user) => {
-             let FirstName = rand + user.fName
-             cy.get('input[name=contactFirstName]')
-                 .type(FirstName)
- 
-             cy.get('input[name=contactLastName]')
-                 .type(user.lName)
- 
-             cy.get('input[data-test=mobile-basic-form-birthday-input]')
-                 .type(user.bDay)
- 
-             cy.get('mat-select[data-test="gender-dropdown"]')
-                 .find('div.mat-select-arrow-wrapper')
-                 .click()
- 
-             cy.get('div[role="listbox"]')
-                 .find('mat-option')
-                 .contains('Man')
-                 .click()
- 
-             //click on the 'next' button
-             cy.get('@NextBtn')
-                 .first()
-                 .click()
- 
-             //Next question - "Where should we send account updates?" should be displayed
-             cy.contains('h2', 'Where should we send account updates?')
-                 .should('be.visible')
- 
-             cy.get('input[name="contactEmail"]')
-                 .scrollIntoView()
-                 .type(FirstName + user.email)
- 
-             cy.get('input[name="contactPhoneNumber"]')
-                 .type(user.phone, { log: false }) 
-         }) */
+        /* cy.fixture('user.json').then((user) => {
+            let FirstName = rand + user.fName
+            cy.step("Enter First Name")
+            cy.get('input[name=contactFirstName]')
+                .type(FirstName)
+
+            cy.step("Enter Last Name")
+            cy.get('input[name=contactLastName]')
+                .type(user.lName)
+
+            cy.step("Enter Birthday")
+            cy.get('input[data-test=mobile-basic-form-birthday-input]')
+                .type(user.bDay)
+
+            cy.step("Click on gender dropdown")
+            cy.get('mat-select[data-test="gender-dropdown"]')
+                .find('div.mat-select-arrow-wrapper')
+                .click()
+
+            cy.step("Choose the option - 'Man'")
+            cy.get('div[role="listbox"]')
+                .find('mat-option')
+                .contains('Man')
+                .click()
+
+            cy.step("click on the Next button")
+            cy.get('@NextBtn')
+                .first()
+                .click()
+
+            cy.section("The query titled - 'Where should we send account updates?' should be displayed")
+            cy.contains('h2', 'Where should we send account updates?')
+                .should('be.visible')
+
+            cy.step("Enter contact Email")
+            cy.get('input[name="contactEmail"]')
+                .scrollIntoView()
+                .type(FirstName + user.email)
+
+            cy.step("Enter Phone number")
+            cy.get('input[name="contactPhoneNumber"]')
+                .type(user.phone, { log: false })
+        }) */
 
         //GETTING USER INFO FROM FAKER API
-        //Enter the first name
+        cy.step("Enter the first name")
         cy.get('input[name=contactFirstName]')
             .scrollIntoView()
             .type(faker.person.firstName())
 
-        //Enter the last name   
+        cy.step("Enter the last name")
         cy.get('input[name=contactLastName]', { timeout: 30000 })
             .type(faker.person.lastName())
 
@@ -310,44 +321,44 @@ describe('Sondermind e2e Testing', () => {
             day: "2-digit",
         })
 
-        //Enter the birth day
+        cy.step("Enter the birth day")
         cy.get('input[data-test=mobile-basic-form-birthday-input]', { timeout: 30_000 })
             .type(bDay)
 
-        //Click on gender dropdown
+        cy.step("Click on gender dropdown")
         cy.get('mat-select[data-test="gender-dropdown"]')
             .find('div.mat-select-arrow-wrapper')
             .click()
 
-        //Choose the option 'Man'
+        cy.step("Choose the option - 'Man'")
         cy.get('div[role="listbox"]')
             .find('mat-option')
             .contains('Man')
             .click()
 
-        //click on the 'next' button
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - "Where should we send account updates?" should be displayed
+        cy.section("The query titled - 'Where should we send account updates?' should be displayed")
         cy.contains('h2', 'Where should we send account updates?')
             .should('be.visible')
 
-        //Enter contact email
+        cy.step("Enter contact email")
         cy.get('input[name="contactEmail"]')
             .scrollIntoView()
             .type(faker.internet.email())
 
-        //Enter Phone number
+        cy.step("Enter Phone number")
         cy.get('input[name="contactPhoneNumber"]')
             //with faker.phone.number(), some times getting the error invalid phone number
             // .type(faker.phone.number())
             //Hence using thefaker.helpers.fromRegExp()
             .type(faker.helpers.fromRegExp('303315[0-9]{4}'))
 
-        //click on the 'next' button            
+        cy.step("click on the Next button")
         cy.clickNextBtn()
 
-        //Next question - "How should your therapist matches contact you?" should be displayed
+        cy.section("The query titled - 'How should your therapist matches contact you?' should be displayed")
         cy.contains('h2', 'How should your therapist matches contact you?')
             .should('be.visible')
 

@@ -53,12 +53,13 @@ Videos can be found directly on the reports or can be watched from **cypress -> 
 ## Features of SM_Test spec
 
 - Test specs are in isolation.
-- A baseUrls are set in cypress.env.json file.
+- The baseUrls which are used in the specs SM_Test.cy.js and webtables.cy.js are set in cypress.env.json file.
 - **Find a Therapist** questionnaire of the application opens up in a separate tab. This is handled by removing the target attribute from the relevant html element.
 - The questions **We're here for you on your journey** and **When are you available for sessions?** don't appear in the flow of questions every time you fill in the questionnaire. This is handled using 'if - else' condition
 - Instead of directly typing the **Location** value for the question **'Where are you located?**. Automated the test script to type a part of the location, then click on the 'add location' icon and use 'down Arrow' option and select the location.
 - To enter text in **Addition preferences** field of the question **Are there any other preferences you'd like to share?** is automated by entering long text using cypress type command with option {delay:0}, such that it enters the text all at once     instead of letter by letter.
 - To fill in the patient/user details for the question **'Who's getting therapy?'**, made use of the static data from the fixture user.json. Javascript function Math.random() is used to make the username and email values fetch the random values and faker api is used inorder to get the dynamic data.
+- Cypress Steps Plugin is installed to enhance the readability of the test spec.
 - Custom commands are used wherever necessary, to extend the functionality of Cypress.
 - Aliases are used to store what commands yield.
 - Note: **Find a Therapist** questionnaire is not automated till the end, as the motto of this automation project is just to create a Test case using Cypress but not to really Find a Therapist.
